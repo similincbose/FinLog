@@ -1,0 +1,214 @@
+CREATE TABLE expense (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    amount_minor_units INTEGER NOT NULL,
+    currency_code TEXT NOT NULL,
+    category_id INTEGER NOT NULL REFERENCES category(id),
+    payment_method_id INTEGER NOT NULL REFERENCES payment_method(id),
+    merchant TEXT,
+    notes TEXT,
+    expense_date TEXT NOT NULL,
+    receipt_image_path TEXT,
+    subtotal_minor_units INTEGER,
+    tax_minor_units INTEGER,
+    discount_minor_units INTEGER,
+    receipt_number TEXT,
+    needs_review INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX expense_date_index ON expense(expense_date);
+CREATE INDEX expense_category_index ON expense(category_id);
+
+-- Every column explicitly aliased so the generated row type has no name
+-- collisions between expense.id, category.id and payment_method.id.
+selectWithDetails:
+SELECT
+    expense.id AS expense_id,
+    expense.amount_minor_units AS expense_amount_minor_units,
+    expense.currency_code AS expense_currency_code,
+    expense.merchant AS expense_merchant,
+    expense.notes AS expense_notes,
+    expense.expense_date AS expense_date,
+    expense.receipt_image_path AS expense_receipt_image_path,
+    expense.subtotal_minor_units AS expense_subtotal_minor_units,
+    expense.tax_minor_units AS expense_tax_minor_units,
+    expense.discount_minor_units AS expense_discount_minor_units,
+    expense.receipt_number AS expense_receipt_number,
+    expense.needs_review AS expense_needs_review,
+    expense.created_at AS expense_created_at,
+    expense.updated_at AS expense_updated_at,
+    category.id AS category_id,
+    category.name AS category_name,
+    category.icon_key AS category_icon_key,
+    category.color_hex AS category_color_hex,
+    category.sort_order AS category_sort_order,
+    category.is_default AS category_is_default,
+    payment_method.id AS payment_method_id,
+    payment_method.name AS payment_method_name,
+    payment_method.sort_order AS payment_method_sort_order,
+    payment_method.is_default AS payment_method_is_default
+FROM expense
+JOIN category ON category.id = expense.category_id
+JOIN payment_method ON payment_method.id = expense.payment_method_id
+WHERE (:searchQuery IS NULL OR expense.merchant LIKE '%' || :searchQuery || '%' OR expense.notes LIKE '%' || :searchQuery || '%')
+AND (:categoryId IS NULL OR expense.category_id = :categoryId)
+AND (:paymentMethodId IS NULL OR expense.payment_method_id = :paymentMethodId)
+AND (:dateFrom IS NULL OR expense.expense_date >= :dateFrom)
+AND (:dateTo IS NULL OR expense.expense_date <= :dateTo)
+ORDER BY expense.expense_date DESC, expense.created_at DESC;
+
+-- Same shape as selectWithDetails but bounded, for the dashboard's recent list -
+-- there's no reason to pull the whole table to show the last handful of rows.
+selectRecent:
+SELECT
+    expense.id AS expense_id,
+    expense.amount_minor_units AS expense_amount_minor_units,
+    expense.currency_code AS expense_currency_code,
+    expense.merchant AS expense_merchant,
+    expense.notes AS expense_notes,
+    expense.expense_date AS expense_date,
+    expense.receipt_image_path AS expense_receipt_image_path,
+    expense.subtotal_minor_units AS expense_subtotal_minor_units,
+    expense.tax_minor_units AS expense_tax_minor_units,
+    expense.discount_minor_units AS expense_discount_minor_units,
+    expense.receipt_number AS expense_receipt_number,
+    expense.needs_review AS expense_needs_review,
+    expense.created_at AS expense_created_at,
+    expense.updated_at AS expense_updated_at,
+    category.id AS category_id,
+    category.name AS category_name,
+    category.icon_key AS category_icon_key,
+    category.color_hex AS category_color_hex,
+    category.sort_order AS category_sort_order,
+    category.is_default AS category_is_default,
+    payment_method.id AS payment_method_id,
+    payment_method.name AS payment_method_name,
+    payment_method.sort_order AS payment_method_sort_order,
+    payment_method.is_default AS payment_method_is_default
+FROM expense
+JOIN category ON category.id = expense.category_id
+JOIN payment_method ON payment_method.id = expense.payment_method_id
+ORDER BY expense.expense_date DESC, expense.created_at DESC
+LIMIT :limit;
+
+selectById:
+SELECT
+    expense.id AS expense_id,
+    expense.amount_minor_units AS expense_amount_minor_units,
+    expense.currency_code AS expense_currency_code,
+    expense.merchant AS expense_merchant,
+    expense.notes AS expense_notes,
+    expense.expense_date AS expense_date,
+    expense.receipt_image_path AS expense_receipt_image_path,
+    expense.subtotal_minor_units AS expense_subtotal_minor_units,
+    expense.tax_minor_units AS expense_tax_minor_units,
+    expense.discount_minor_units AS expense_discount_minor_units,
+    expense.receipt_number AS expense_receipt_number,
+    expense.needs_review AS expense_needs_review,
+    expense.created_at AS expense_created_at,
+    expense.updated_at AS expense_updated_at,
+    category.id AS category_id,
+    category.name AS category_name,
+    category.icon_key AS category_icon_key,
+    category.color_hex AS category_color_hex,
+    category.sort_order AS category_sort_order,
+    category.is_default AS category_is_default,
+    payment_method.id AS payment_method_id,
+    payment_method.name AS payment_method_name,
+    payment_method.sort_order AS payment_method_sort_order,
+    payment_method.is_default AS payment_method_is_default
+FROM expense
+JOIN category ON category.id = expense.category_id
+JOIN payment_method ON payment_method.id = expense.payment_method_id
+WHERE expense.id = ?;
+
+selectTotalBetween:
+SELECT COALESCE(SUM(amount_minor_units), 0)
+FROM expense
+WHERE expense_date >= :dateFrom AND expense_date <= :dateTo;
+
+selectLargestBetween:
+SELECT
+    expense.id AS expense_id,
+    expense.amount_minor_units AS expense_amount_minor_units,
+    expense.currency_code AS expense_currency_code,
+    expense.merchant AS expense_merchant,
+    expense.notes AS expense_notes,
+    expense.expense_date AS expense_date,
+    expense.receipt_image_path AS expense_receipt_image_path,
+    expense.subtotal_minor_units AS expense_subtotal_minor_units,
+    expense.tax_minor_units AS expense_tax_minor_units,
+    expense.discount_minor_units AS expense_discount_minor_units,
+    expense.receipt_number AS expense_receipt_number,
+    expense.needs_review AS expense_needs_review,
+    expense.created_at AS expense_created_at,
+    expense.updated_at AS expense_updated_at,
+    category.id AS category_id,
+    category.name AS category_name,
+    category.icon_key AS category_icon_key,
+    category.color_hex AS category_color_hex,
+    category.sort_order AS category_sort_order,
+    category.is_default AS category_is_default,
+    payment_method.id AS payment_method_id,
+    payment_method.name AS payment_method_name,
+    payment_method.sort_order AS payment_method_sort_order,
+    payment_method.is_default AS payment_method_is_default
+FROM expense
+JOIN category ON category.id = expense.category_id
+JOIN payment_method ON payment_method.id = expense.payment_method_id
+WHERE expense.expense_date >= :dateFrom AND expense.expense_date <= :dateTo
+ORDER BY expense.amount_minor_units DESC
+LIMIT 1;
+
+selectCountBetween:
+SELECT COUNT(*)
+FROM expense
+WHERE expense_date >= :dateFrom AND expense_date <= :dateTo;
+
+selectCategoryTotalsBetween:
+SELECT category_id, SUM(amount_minor_units) AS total
+FROM expense
+WHERE expense_date >= :dateFrom AND expense_date <= :dateTo
+GROUP BY category_id
+ORDER BY total DESC;
+
+selectDailyTotalsBetween:
+SELECT expense_date, SUM(amount_minor_units) AS total
+FROM expense
+WHERE expense_date >= :dateFrom AND expense_date <= :dateTo
+GROUP BY expense_date;
+
+insert:
+INSERT INTO expense (
+    amount_minor_units, currency_code, category_id, payment_method_id, merchant,
+    notes, expense_date, receipt_image_path, subtotal_minor_units, tax_minor_units,
+    discount_minor_units, receipt_number, needs_review, created_at, updated_at
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+update:
+UPDATE expense SET
+    amount_minor_units = ?,
+    currency_code = ?,
+    category_id = ?,
+    payment_method_id = ?,
+    merchant = ?,
+    notes = ?,
+    expense_date = ?,
+    receipt_image_path = ?,
+    subtotal_minor_units = ?,
+    tax_minor_units = ?,
+    discount_minor_units = ?,
+    receipt_number = ?,
+    needs_review = ?,
+    updated_at = ?
+WHERE id = ?;
+
+deleteById:
+DELETE FROM expense WHERE id = ?;
+
+reassignCategory:
+UPDATE expense SET category_id = ? WHERE category_id = ?;
+
+lastInsertRowId:
+SELECT last_insert_rowid();

@@ -1,0 +1,47 @@
+# Build output
+/build
+build/
+/captures
+.cxx
+.externalNativeBuild
+
+# Gradle
+.gradle
+# The wrapper jar must stay tracked, or a fresh clone cannot build.
+# GitHub's Java template ignores *.jar, which would exclude it.
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration
+local.properties
+/local.properties
+
+# IDE
+/.idea
+*.iml
+
+# Kotlin
+.kotlin/
+
+# Xcode
+xcuserdata/
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+*.hprof
+
+# Misc
+*.class
+*.log
+*.ctxt
+.mtj.tmp/
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+.DS_Store
