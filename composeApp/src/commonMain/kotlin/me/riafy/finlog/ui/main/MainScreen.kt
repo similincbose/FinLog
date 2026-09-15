@@ -1,7 +1,9 @@
 package me.riafy.finlog.ui.main
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -261,7 +264,10 @@ private fun BottomBarItem(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
-    val active = if (isDark) Color.White else MaterialTheme.colorScheme.primary
+    // A colour change alone read too weakly in dark mode - white vs. 55%-alpha
+    // white is only a brightness difference, not an actual colour signal. The
+    // brand teal now marks "selected" the same way in both themes.
+    val active = MaterialTheme.colorScheme.primary
     val inactive = if (isDark) Color.White.copy(alpha = 0.55f) else Color(0xFF667085)
     val tint by animateColorAsState(
         targetValue = if (isSelected) active else inactive,
@@ -269,8 +275,15 @@ private fun BottomBarItem(
         label = "tabTint"
     )
 
-    // Netflix and Prime's own tab bars mark selection with the icon alone -
-    // filled vs. outline plus a colour change - rather than a background shape.
+    // A soft pill behind the selected tab too - the same pattern Apple's own
+    // native tab bars use (seen in Fitness's activity picker) - since colour and
+    // icon-fill alone still weren't reading as clearly "selected" at a glance.
+    val indicatorAlpha by animateFloatAsState(
+        targetValue = if (isSelected) 1f else 0f,
+        animationSpec = tween(220),
+        label = "tabIndicator"
+    )
+
     Box(
         modifier = modifier
             .size(44.dp)
@@ -282,6 +295,14 @@ private fun BottomBarItem(
             ),
         contentAlignment = Alignment.Center
     ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(indicatorAlpha)
+                .clip(CircleShape)
+                .background(active.copy(alpha = if (isDark) 0.20f else 0.14f))
+        )
+
         Icon(
             imageVector = if (isSelected) tab.selectedIcon else tab.icon,
             contentDescription = tab.label,
