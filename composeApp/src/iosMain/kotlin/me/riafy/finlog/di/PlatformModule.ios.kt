@@ -9,6 +9,8 @@ import me.riafy.finlog.utils.image.ImagePicker
 import me.riafy.finlog.utils.image.IosImagePicker
 import me.riafy.finlog.utils.receipt.IosTextRecognizer
 import me.riafy.finlog.utils.receipt.ReceiptTextRecognizer
+import me.riafy.finlog.utils.share.IosShareService
+import me.riafy.finlog.utils.share.ShareService
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import platform.Foundation.NSUserDefaults
@@ -22,4 +24,6 @@ actual val platformModule: Module = module {
     single<ImagePicker> { IosImagePicker() }
 
     single<ReceiptTextRecognizer> { IosTextRecognizer() }
+
+    single<ShareService> { IosShareService() }
 }

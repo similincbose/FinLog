@@ -36,6 +36,8 @@ import androidx.navigation.navArgument
 import androidx.savedstate.read
 import me.riafy.finlog.ui.addexpense.AddExpenseScreen
 import me.riafy.finlog.ui.addexpense.AddExpenseViewModel
+import me.riafy.finlog.ui.categoryeditor.CategoryEditorScreen
+import me.riafy.finlog.ui.categoryeditor.CategoryEditorViewModel
 import me.riafy.finlog.ui.components.GlassSurface
 import me.riafy.finlog.ui.expensedetail.ExpenseDetailScreen
 import me.riafy.finlog.ui.expensedetail.ExpenseDetailViewModel
@@ -43,6 +45,10 @@ import me.riafy.finlog.ui.home.HomeScreen
 import me.riafy.finlog.ui.home.HomeViewModel
 import me.riafy.finlog.ui.insights.InsightsScreen
 import me.riafy.finlog.ui.insights.InsightsViewModel
+import me.riafy.finlog.ui.managecategories.ManageCategoriesScreen
+import me.riafy.finlog.ui.managecategories.ManageCategoriesViewModel
+import me.riafy.finlog.ui.managepaymentmethods.ManagePaymentMethodsScreen
+import me.riafy.finlog.ui.managepaymentmethods.ManagePaymentMethodsViewModel
 import me.riafy.finlog.ui.receiptreview.ReceiptReviewScreen
 import me.riafy.finlog.ui.receiptreview.ReceiptReviewViewModel
 import me.riafy.finlog.ui.receiptscan.ScanReceiptScreen
@@ -125,7 +131,51 @@ fun MainScreen(
             }
 
             composable(FinlogRoutes.SETTINGS) {
-                SettingsScreen(viewModel = settingsViewModel)
+                SettingsScreen(
+                    viewModel = settingsViewModel,
+                    onCategoriesClick = { navController.navigate(FinlogRoutes.CATEGORIES) },
+                    onPaymentMethodsClick = { navController.navigate(FinlogRoutes.PAYMENT_METHODS) }
+                )
+            }
+
+            composable(FinlogRoutes.CATEGORIES) {
+                val viewModel = koinViewModel<ManageCategoriesViewModel>()
+                ManageCategoriesScreen(
+                    viewModel = viewModel,
+                    onAddClick = { navController.navigate(FinlogRoutes.ADD_CATEGORY) },
+                    onEditClick = { id -> navController.navigate(FinlogRoutes.editCategory(id)) },
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(FinlogRoutes.ADD_CATEGORY) {
+                val viewModel = koinViewModel<CategoryEditorViewModel> { parametersOf(null) }
+                CategoryEditorScreen(
+                    viewModel = viewModel,
+                    onSaved = { navController.popBackStack() },
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = FinlogRoutes.EDIT_CATEGORY,
+                arguments = listOf(navArgument("categoryId") { type = NavType.LongType })
+            ) { entry ->
+                val categoryId = entry.arguments?.read { getLong("categoryId") } ?: return@composable
+                val viewModel = koinViewModel<CategoryEditorViewModel> { parametersOf(categoryId) }
+                CategoryEditorScreen(
+                    viewModel = viewModel,
+                    onSaved = { navController.popBackStack() },
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(FinlogRoutes.PAYMENT_METHODS) {
+                val viewModel = koinViewModel<ManagePaymentMethodsViewModel>()
+                ManagePaymentMethodsScreen(
+                    viewModel = viewModel,
+                    onBackClick = { navController.popBackStack() }
+                )
             }
 
             composable(FinlogRoutes.ADD_EXPENSE) {

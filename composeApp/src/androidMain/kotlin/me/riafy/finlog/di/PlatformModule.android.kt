@@ -9,6 +9,8 @@ import me.riafy.finlog.utils.image.AndroidImagePicker
 import me.riafy.finlog.utils.image.ImagePicker
 import me.riafy.finlog.utils.receipt.AndroidTextRecognizer
 import me.riafy.finlog.utils.receipt.ReceiptTextRecognizer
+import me.riafy.finlog.utils.share.AndroidShareService
+import me.riafy.finlog.utils.share.ShareService
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -30,4 +32,6 @@ actual val platformModule: Module = module {
     single<ImagePicker> { get<AndroidImagePicker>() }
 
     single<ReceiptTextRecognizer> { AndroidTextRecognizer() }
+
+    single<ShareService> { AndroidShareService(context = androidContext()) }
 }

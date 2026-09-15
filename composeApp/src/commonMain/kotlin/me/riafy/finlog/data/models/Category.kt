@@ -36,6 +36,14 @@ object DefaultCategories {
     const val FALLBACK_NAME = "Other"
 }
 
+/** The swatches offered when a user picks a colour for their own category - the same set the defaults are drawn from. */
+object CategoryColorPalette {
+    val hexColors = listOf(
+        "#E8734D", "#4C8DFF", "#B05FD1", "#E8A33D", "#D64B8F",
+        "#2FA8A0", "#4FB669", "#6B7FE0", "#3DA5D9", "#8A93A6", "#9AA3B8"
+    )
+}
+
 /** String keys stored in the database and mapped to an ImageVector by CategoryIcons. */
 object CategoryIconKey {
     const val FOOD = "food"

@@ -1,5 +1,6 @@
 package me.riafy.finlog.ui.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,12 +8,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -23,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import me.riafy.finlog.data.local.preference.AppPreference
 import me.riafy.finlog.data.models.CurrencyInfo
 import me.riafy.finlog.ui.components.FilterChip
@@ -31,6 +40,8 @@ import me.riafy.finlog.ui.theme.Spacing
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
+    onCategoriesClick: () -> Unit,
+    onPaymentMethodsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState
@@ -82,6 +93,26 @@ fun SettingsScreen(
         }
 
         item {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                Text(text = "Manage", style = MaterialTheme.typography.labelLarge)
+                SettingsRow(icon = Icons.Filled.Category, label = "Categories", onClick = onCategoriesClick)
+                SettingsRow(icon = Icons.Filled.Payments, label = "Payment methods", onClick = onPaymentMethodsClick)
+            }
+        }
+
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                Text(text = "Data", style = MaterialTheme.typography.labelLarge)
+                SettingsRow(
+                    icon = Icons.Filled.FileDownload,
+                    label = if (state.isExporting) "Exporting…" else "Export as CSV",
+                    onClick = viewModel::exportCsv,
+                    trailing = { if (state.isExporting) CircularProgressIndicator(modifier = Modifier.size(20.dp)) }
+                )
+            }
+        }
+
+        item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,6 +147,45 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
+
+/** A tappable settings entry - leading icon, label, and a trailing chevron unless a custom trailing slot is given. */
+@Composable
+private fun SettingsRow(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    trailing: @Composable (() -> Unit)? = null
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = Spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        if (trailing != null) {
+            trailing()
+        } else {
+            Icon(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

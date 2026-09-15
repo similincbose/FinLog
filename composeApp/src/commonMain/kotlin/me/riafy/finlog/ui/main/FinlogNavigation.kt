@@ -22,9 +22,14 @@ object FinlogRoutes {
     const val EXPENSE_DETAIL = "expense_detail/{expenseId}"
     const val SCAN_RECEIPT = "scan_receipt"
     const val RECEIPT_REVIEW = "receipt_review"
+    const val CATEGORIES = "categories"
+    const val ADD_CATEGORY = "add_category"
+    const val EDIT_CATEGORY = "edit_category/{categoryId}"
+    const val PAYMENT_METHODS = "payment_methods"
 
     fun editExpense(expenseId: Long) = "edit_expense/$expenseId"
     fun expenseDetail(expenseId: Long) = "expense_detail/$expenseId"
+    fun editCategory(categoryId: Long) = "edit_category/$categoryId"
 }
 
 /** The four tabs in the bottom bar. */
