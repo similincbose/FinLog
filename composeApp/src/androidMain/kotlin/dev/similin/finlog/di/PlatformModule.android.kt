@@ -9,6 +9,8 @@ import dev.similin.finlog.utils.image.AndroidImagePicker
 import dev.similin.finlog.utils.image.ImagePicker
 import dev.similin.finlog.utils.receipt.AndroidTextRecognizer
 import dev.similin.finlog.utils.receipt.ReceiptTextRecognizer
+import dev.similin.finlog.utils.share.AndroidShareService
+import dev.similin.finlog.utils.share.ShareService
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -30,4 +32,6 @@ actual val platformModule: Module = module {
     single<ImagePicker> { get<AndroidImagePicker>() }
 
     single<ReceiptTextRecognizer> { AndroidTextRecognizer() }
+
+    single<ShareService> { AndroidShareService(context = androidContext()) }
 }

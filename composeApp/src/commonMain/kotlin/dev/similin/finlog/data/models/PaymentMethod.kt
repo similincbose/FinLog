@@ -9,4 +9,7 @@ data class PaymentMethod(
 
 object DefaultPaymentMethods {
     val names = listOf("Cash", "UPI", "Credit Card", "Debit Card", "Bank Transfer", "Other")
+
+    /** Where a deleted payment method's expenses land, mirroring DefaultCategories.FALLBACK_NAME. */
+    const val FALLBACK_NAME = "Other"
 }

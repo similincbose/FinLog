@@ -210,5 +210,8 @@ DELETE FROM expense WHERE id = ?;
 reassignCategory:
 UPDATE expense SET category_id = ? WHERE category_id = ?;
 
+reassignPaymentMethod:
+UPDATE expense SET payment_method_id = ? WHERE payment_method_id = ?;
+
 lastInsertRowId:
 SELECT last_insert_rowid();

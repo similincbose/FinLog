@@ -30,7 +30,20 @@ class PaymentMethodRepository(private val database: FinlogDatabase) {
         queries.update(name = name, id = id)
     }
 
+    /**
+     * Deletes a payment method, moving any expenses under it to "Other" first -
+     * same reasoning as CategoryRepository.delete: a payment method actually in
+     * use must never leave expenses pointing at a row that no longer exists.
+     * The fallback itself can't be deleted.
+     */
     suspend fun delete(id: Long) {
+        val all = queries.selectAll().executeAsList()
+        val target = all.find { it.id == id } ?: return
+        val fallback = all.find { it.name == DefaultPaymentMethods.FALLBACK_NAME && it.id != id }
+
+        if (target.name == DefaultPaymentMethods.FALLBACK_NAME || fallback == null) return
+
+        database.expenseQueries.reassignPaymentMethod(fallback.id, id)
         queries.deleteById(id)
     }
 }

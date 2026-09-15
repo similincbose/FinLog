@@ -1,9 +1,12 @@
 package dev.similin.finlog.di
 
 import dev.similin.finlog.ui.addexpense.AddExpenseViewModel
+import dev.similin.finlog.ui.categoryeditor.CategoryEditorViewModel
 import dev.similin.finlog.ui.expensedetail.ExpenseDetailViewModel
 import dev.similin.finlog.ui.home.HomeViewModel
 import dev.similin.finlog.ui.insights.InsightsViewModel
+import dev.similin.finlog.ui.managecategories.ManageCategoriesViewModel
+import dev.similin.finlog.ui.managepaymentmethods.ManagePaymentMethodsViewModel
 import dev.similin.finlog.ui.receiptreview.ReceiptReviewViewModel
 import dev.similin.finlog.ui.receiptscan.ScanReceiptViewModel
 import dev.similin.finlog.ui.settings.SettingsViewModel
@@ -19,9 +22,12 @@ val viewModelModule = module {
     viewModelOf(::SettingsViewModel)
     viewModelOf(::ScanReceiptViewModel)
     viewModelOf(::ReceiptReviewViewModel)
+    viewModelOf(::ManageCategoriesViewModel)
+    viewModelOf(::ManagePaymentMethodsViewModel)
 
     // Take a runtime id (an existing expense to load, or null for a fresh one),
     // so viewModelOf's constructor-reflection can't wire them automatically.
     viewModel { params -> AddExpenseViewModel(params.getOrNull(), get(), get(), get(), get()) }
     viewModel { params -> ExpenseDetailViewModel(params.get(), get()) }
+    viewModel { params -> CategoryEditorViewModel(params.getOrNull(), get()) }
 }
