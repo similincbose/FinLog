@@ -5,6 +5,10 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import me.riafy.finlog.database.FinlogDatabase
+import me.riafy.finlog.utils.image.AndroidImagePicker
+import me.riafy.finlog.utils.image.ImagePicker
+import me.riafy.finlog.utils.receipt.AndroidTextRecognizer
+import me.riafy.finlog.utils.receipt.ReceiptTextRecognizer
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -20,4 +24,10 @@ actual val platformModule: Module = module {
     single<SqlDriver> {
         AndroidSqliteDriver(FinlogDatabase.Schema, androidContext(), "finlog.db")
     }
+
+    single { AndroidImagePicker(context = androidContext()) }
+
+    single<ImagePicker> { get<AndroidImagePicker>() }
+
+    single<ReceiptTextRecognizer> { AndroidTextRecognizer() }
 }

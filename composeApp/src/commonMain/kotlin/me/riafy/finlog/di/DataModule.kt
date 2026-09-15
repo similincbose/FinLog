@@ -5,6 +5,7 @@ import me.riafy.finlog.data.repo.CategoryRepository
 import me.riafy.finlog.data.repo.ExpenseRepository
 import me.riafy.finlog.data.repo.PaymentMethodRepository
 import me.riafy.finlog.database.FinlogDatabase
+import me.riafy.finlog.utils.receipt.PendingReceiptHolder
 import org.koin.dsl.module
 
 /** Provides preferences, the database and the repositories built on top of it **/
@@ -19,4 +20,6 @@ val dataModule = module {
     single { PaymentMethodRepository(database = get()) }
 
     single { ExpenseRepository(database = get()) }
+
+    single { PendingReceiptHolder() }
 }

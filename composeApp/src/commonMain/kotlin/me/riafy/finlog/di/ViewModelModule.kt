@@ -4,6 +4,8 @@ import me.riafy.finlog.ui.addexpense.AddExpenseViewModel
 import me.riafy.finlog.ui.expensedetail.ExpenseDetailViewModel
 import me.riafy.finlog.ui.home.HomeViewModel
 import me.riafy.finlog.ui.insights.InsightsViewModel
+import me.riafy.finlog.ui.receiptreview.ReceiptReviewViewModel
+import me.riafy.finlog.ui.receiptscan.ScanReceiptViewModel
 import me.riafy.finlog.ui.settings.SettingsViewModel
 import me.riafy.finlog.ui.transactions.TransactionsViewModel
 import org.koin.core.module.dsl.viewModel
@@ -15,6 +17,8 @@ val viewModelModule = module {
     viewModelOf(::TransactionsViewModel)
     viewModelOf(::InsightsViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::ScanReceiptViewModel)
+    viewModelOf(::ReceiptReviewViewModel)
 
     // Take a runtime id (an existing expense to load, or null for a fresh one),
     // so viewModelOf's constructor-reflection can't wire them automatically.

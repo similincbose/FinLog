@@ -20,6 +20,8 @@ object FinlogRoutes {
     const val ADD_EXPENSE = "add_expense"
     const val EDIT_EXPENSE = "edit_expense/{expenseId}"
     const val EXPENSE_DETAIL = "expense_detail/{expenseId}"
+    const val SCAN_RECEIPT = "scan_receipt"
+    const val RECEIPT_REVIEW = "receipt_review"
 
     fun editExpense(expenseId: Long) = "edit_expense/$expenseId"
     fun expenseDetail(expenseId: Long) = "expense_detail/$expenseId"

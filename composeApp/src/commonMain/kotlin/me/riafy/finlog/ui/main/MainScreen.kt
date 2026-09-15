@@ -1,16 +1,29 @@
 package me.riafy.finlog.ui.main
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,12 +33,17 @@ import androidx.navigation.navArgument
 import androidx.savedstate.read
 import me.riafy.finlog.ui.addexpense.AddExpenseScreen
 import me.riafy.finlog.ui.addexpense.AddExpenseViewModel
+import me.riafy.finlog.ui.components.GlassSurface
 import me.riafy.finlog.ui.expensedetail.ExpenseDetailScreen
 import me.riafy.finlog.ui.expensedetail.ExpenseDetailViewModel
 import me.riafy.finlog.ui.home.HomeScreen
 import me.riafy.finlog.ui.home.HomeViewModel
 import me.riafy.finlog.ui.insights.InsightsScreen
 import me.riafy.finlog.ui.insights.InsightsViewModel
+import me.riafy.finlog.ui.receiptreview.ReceiptReviewScreen
+import me.riafy.finlog.ui.receiptreview.ReceiptReviewViewModel
+import me.riafy.finlog.ui.receiptscan.ScanReceiptScreen
+import me.riafy.finlog.ui.receiptscan.ScanReceiptViewModel
 import me.riafy.finlog.ui.settings.SettingsScreen
 import me.riafy.finlog.ui.settings.SettingsViewModel
 import me.riafy.finlog.ui.transactions.TransactionsScreen
@@ -36,6 +54,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun MainScreen(
     settingsViewModel: SettingsViewModel,
+    isDark: Boolean,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
@@ -46,54 +65,39 @@ fun MainScreen(
 
     Scaffold(
         modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (isTabRoute) {
-                NavigationBar {
-                    FinlogTab.entries.forEach { tab ->
-                        val selected = currentRoute == tab.route
-                        NavigationBarItem(
-                            selected = selected,
-                            onClick = {
-                                if (!selected) {
-                                    navController.navigate(tab.route) {
-                                        popUpTo(FinlogRoutes.HOME) { saveState = true }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = if (selected) tab.selectedIcon else tab.icon,
-                                    contentDescription = tab.label
-                                )
-                            },
-                            label = { Text(tab.label) },
-                            // The M3 default indicator is secondaryContainer, which we
-                            // never assign a brand meaning to - use primary instead.
-                            colors = NavigationBarItemDefaults.colors(
-                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                selectedTextColor = MaterialTheme.colorScheme.onSurface
-                            )
-                        )
+                FinlogBottomBar(
+                    currentRoute = currentRoute,
+                    isDark = isDark,
+                    onTabSelected = { tab ->
+                        if (tab.route != currentRoute) {
+                            navController.navigate(tab.route) {
+                                popUpTo(FinlogRoutes.HOME) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
                     }
-                }
+                )
             }
         }
-    ) { padding ->
+    ) { _ ->
+        // Scaffold's padding is deliberately unused: the bar floats over the
+        // content, and each screen adds bottomBarClearance so its last row
+        // still clears it.
         NavHost(
             navController = navController,
             startDestination = FinlogRoutes.HOME,
-            // Zero automatically on non-tab routes, since the bar itself renders nothing there.
-            modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
+            modifier = Modifier.fillMaxSize()
         ) {
             composable(FinlogRoutes.HOME) {
                 val viewModel = koinViewModel<HomeViewModel>()
                 HomeScreen(
                     viewModel = viewModel,
                     onAddExpenseClick = { navController.navigate(FinlogRoutes.ADD_EXPENSE) },
-                    onScanReceiptClick = { navController.navigate(FinlogRoutes.ADD_EXPENSE) },
+                    onScanReceiptClick = { navController.navigate(FinlogRoutes.SCAN_RECEIPT) },
                     onSeeAllTransactionsClick = {
                         navController.navigate(FinlogRoutes.TRANSACTIONS) {
                             popUpTo(FinlogRoutes.HOME) { saveState = true }
@@ -161,6 +165,128 @@ fun MainScreen(
                     }
                 )
             }
+
+            composable(FinlogRoutes.SCAN_RECEIPT) {
+                val viewModel = koinViewModel<ScanReceiptViewModel>()
+                ScanReceiptScreen(
+                    viewModel = viewModel,
+                    onReadyToReview = {
+                        navController.navigate(FinlogRoutes.RECEIPT_REVIEW) {
+                            popUpTo(FinlogRoutes.SCAN_RECEIPT) { inclusive = true }
+                        }
+                    },
+                    onEnterManuallyClick = {
+                        navController.navigate(FinlogRoutes.ADD_EXPENSE) {
+                            popUpTo(FinlogRoutes.SCAN_RECEIPT) { inclusive = true }
+                        }
+                    },
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(FinlogRoutes.RECEIPT_REVIEW) {
+                val viewModel = koinViewModel<ReceiptReviewViewModel>()
+                val settingsState by settingsViewModel.uiState
+                ReceiptReviewScreen(
+                    viewModel = viewModel,
+                    currencyCode = settingsState.currencyCode,
+                    onSaved = { id ->
+                        navController.navigate(FinlogRoutes.expenseDetail(id)) {
+                            popUpTo(FinlogRoutes.HOME)
+                        }
+                    },
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
         }
+    }
+}
+
+/**
+ * A floating glass capsule rather than a full-width opaque bar - the same
+ * material Netflix and Prime Video use for their iOS tab bar, and the closest
+ * Android equivalent where a real backdrop blur isn't available. It sits over
+ * the content instead of cutting the screen in two, which lets each screen's
+ * content run to the bottom edge.
+ *
+ * Icon-only, like Netflix and Prime's own tab bars - no labels competing for
+ * space, and every tab gets an equal, fixed-width slot instead of sizing to its
+ * own content.
+ */
+@Composable
+private fun FinlogBottomBar(
+    currentRoute: String,
+    isDark: Boolean,
+    onTabSelected: (FinlogTab) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+    ) {
+        GlassSurface(
+            modifier = Modifier.fillMaxWidth(),
+            isDark = isDark,
+            cornerRadius = 26.dp
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FinlogTab.entries.forEach { tab ->
+                    BottomBarItem(
+                        tab = tab,
+                        isSelected = currentRoute == tab.route,
+                        isDark = isDark,
+                        onClick = { onTabSelected(tab) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BottomBarItem(
+    tab: FinlogTab,
+    isSelected: Boolean,
+    isDark: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val active = if (isDark) Color.White else MaterialTheme.colorScheme.primary
+    val inactive = if (isDark) Color.White.copy(alpha = 0.55f) else Color(0xFF667085)
+    val tint by animateColorAsState(
+        targetValue = if (isSelected) active else inactive,
+        animationSpec = tween(220),
+        label = "tabTint"
+    )
+
+    // Netflix and Prime's own tab bars mark selection with the icon alone -
+    // filled vs. outline plus a colour change - rather than a background shape.
+    Box(
+        modifier = modifier
+            .size(44.dp)
+            .clip(CircleShape)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = if (isSelected) tab.selectedIcon else tab.icon,
+            contentDescription = tab.label,
+            tint = tint,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }

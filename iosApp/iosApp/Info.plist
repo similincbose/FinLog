@@ -24,6 +24,10 @@
 	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Finlog needs the camera to scan receipts.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Finlog needs photo access to scan a receipt from your library.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

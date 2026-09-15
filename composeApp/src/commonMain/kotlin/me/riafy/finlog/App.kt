@@ -20,7 +20,9 @@ fun App() {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val settingsState by settingsViewModel.uiState
 
-    FinlogTheme(darkTheme = shouldUseDarkTheme(settingsState.themeMode)) {
-        MainScreen(settingsViewModel = settingsViewModel)
+    val isDark = shouldUseDarkTheme(settingsState.themeMode)
+
+    FinlogTheme(darkTheme = isDark) {
+        MainScreen(settingsViewModel = settingsViewModel, isDark = isDark)
     }
 }
