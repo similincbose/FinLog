@@ -78,6 +78,10 @@ kotlin {
             implementation("androidx.core:core-ktx:1.17.0")
             implementation("io.insert-koin:koin-android:$koinVersion")
             implementation("app.cash.sqldelight:android-driver:$sqlDelightVersion")
+
+            // On-device text recognition for receipt scanning - standalone model,
+            // no Firebase project required
+            implementation("com.google.mlkit:text-recognition:16.0.1")
         }
 
         iosMain.dependencies {

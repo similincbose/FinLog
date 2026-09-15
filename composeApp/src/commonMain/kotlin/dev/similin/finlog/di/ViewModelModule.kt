@@ -4,6 +4,8 @@ import dev.similin.finlog.ui.addexpense.AddExpenseViewModel
 import dev.similin.finlog.ui.expensedetail.ExpenseDetailViewModel
 import dev.similin.finlog.ui.home.HomeViewModel
 import dev.similin.finlog.ui.insights.InsightsViewModel
+import dev.similin.finlog.ui.receiptreview.ReceiptReviewViewModel
+import dev.similin.finlog.ui.receiptscan.ScanReceiptViewModel
 import dev.similin.finlog.ui.settings.SettingsViewModel
 import dev.similin.finlog.ui.transactions.TransactionsViewModel
 import org.koin.core.module.dsl.viewModel
@@ -15,6 +17,8 @@ val viewModelModule = module {
     viewModelOf(::TransactionsViewModel)
     viewModelOf(::InsightsViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::ScanReceiptViewModel)
+    viewModelOf(::ReceiptReviewViewModel)
 
     // Take a runtime id (an existing expense to load, or null for a fresh one),
     // so viewModelOf's constructor-reflection can't wire them automatically.

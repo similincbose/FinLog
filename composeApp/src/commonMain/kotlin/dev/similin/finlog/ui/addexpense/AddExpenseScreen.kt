@@ -39,18 +39,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Instant
-import dev.similin.finlog.ui.components.CategoryIcon
 import dev.similin.finlog.ui.components.FilterChip
 import dev.similin.finlog.ui.components.MoneyInput
 import dev.similin.finlog.ui.theme.Spacing
 import dev.similin.finlog.utils.date.asDayMonthYear
+import dev.similin.finlog.utils.date.toEpochMillisUtc
+import dev.similin.finlog.utils.date.toLocalDateFromEpochMillisUtc
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -194,7 +188,7 @@ fun AddExpenseScreen(
             confirmButton = {
                 TextButton(onClick = {
                     datePickerState.selectedDateMillis?.let { millis ->
-                        viewModel.onDateChange(millis.toLocalDate())
+                        viewModel.onDateChange(millis.toLocalDateFromEpochMillisUtc())
                     }
                     showDatePicker = false
                 }) { Text("OK") }
@@ -207,11 +201,3 @@ fun AddExpenseScreen(
         }
     }
 }
-
-// The date picker works in UTC millis regardless of device timezone, so the
-// round trip through LocalDate stays anchored to UTC on both ends.
-private fun LocalDate.toEpochMillisUtc(): Long =
-    LocalDateTime(this, LocalTime(0, 0)).toInstant(TimeZone.UTC).toEpochMilliseconds()
-
-private fun Long.toLocalDate(): LocalDate =
-    Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).date
