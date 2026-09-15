@@ -1,0 +1,20 @@
+CREATE TABLE line_item (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    expense_id INTEGER NOT NULL REFERENCES expense(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    quantity REAL,
+    unit_price_minor_units INTEGER,
+    total_minor_units INTEGER
+);
+
+CREATE INDEX line_item_expense_index ON line_item(expense_id);
+
+selectByExpenseId:
+SELECT * FROM line_item WHERE expense_id = ? ORDER BY id ASC;
+
+insert:
+INSERT INTO line_item (expense_id, name, quantity, unit_price_minor_units, total_minor_units)
+VALUES (?, ?, ?, ?, ?);
+
+deleteByExpenseId:
+DELETE FROM line_item WHERE expense_id = ?;
