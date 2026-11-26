@@ -96,9 +96,9 @@ val Typography = Typography(
 val MoneyDisplayStyle = TextStyle(
     fontFamily = FontFamily.Default,
     fontWeight = FontWeight.Bold,
-    fontSize = 40.sp,
-    lineHeight = 44.sp,
-    letterSpacing = (-0.8).sp
+    fontSize = 52.sp,
+    lineHeight = 56.sp,
+    letterSpacing = (-1).sp
 )
 
 /** Money inline in a list row or summary line. */

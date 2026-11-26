@@ -13,7 +13,11 @@ import dev.similin.finlog.ui.theme.MoneyDisplayStyle
 import dev.similin.finlog.ui.theme.Shapes
 import dev.similin.finlog.ui.theme.Spacing
 
-/** The large "Spent this month" figure at the top of the dashboard. */
+/**
+ * The large "Spent this month" figure, set as a yellow sign band: the one
+ * place the signal colour carries the whole surface, and the amount is the
+ * monumental number you read first.
+ */
 @Composable
 fun HeroSummaryCard(
     label: String,
@@ -29,7 +33,7 @@ fun HeroSummaryCard(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         Text(

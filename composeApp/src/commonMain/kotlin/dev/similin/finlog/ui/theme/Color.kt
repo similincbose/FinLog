@@ -2,64 +2,58 @@ package dev.similin.finlog.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Neutrals - light
-val Ink = Color(0xFF10182B)
-val InkMuted = Color(0xFF5B6478)
-val InkSubtle = Color(0xFF97A0B4)
-val PageLight = Color(0xFFF7F8FA)
-val SurfaceLight = Color(0xFFFFFFFF)
-val OutlineLight = Color(0xFFE6E9EF)
+// Airport wayfinding. The yellow is reserved for "where to go / what matters
+// now" - primary actions, the active tab, the summary band - and nothing else.
+// Everything else is a quiet neutral so the yellow keeps its meaning.
 
-// Elevated-surface tones - light. Material3 derives these from a purple-leaning
-// baseline when a color scheme doesn't specify them, which shows up on things
-// like the bottom navigation bar; naming them keeps every surface neutral.
+// Signal yellow, the sign-band ground
+val SignYellow = Color(0xFFFFC800)
+val SignYellowPressed = Color(0xFFE6B300)
+val SignYellowSoft = Color(0xFFFFF1B8)
+val SignBlack = Color(0xFF111111)
+
+// Neutrals - light
+val Ink = Color(0xFF111111)
+val InkMuted = Color(0xFF4A4D55)
+val InkSubtle = Color(0xFF7A7E88)
+val PageLight = Color(0xFFF2F2F0)
+val SurfaceLight = Color(0xFFFFFFFF)
+val OutlineLight = Color(0xFFD4D4D0)
+
+// Elevated-surface tones - light
 val SurfaceContainerLowestLight = Color(0xFFFFFFFF)
-val SurfaceContainerLowLight = Color(0xFFF3F4F7)
-val SurfaceContainerLight = Color(0xFFEFF0F4)
-val SurfaceContainerHighLight = Color(0xFFE9EAEF)
-val SurfaceContainerHighestLight = Color(0xFFE3E5EB)
+val SurfaceContainerLowLight = Color(0xFFF7F7F5)
+val SurfaceContainerLight = Color(0xFFEDEDEA)
+val SurfaceContainerHighLight = Color(0xFFE6E6E2)
+val SurfaceContainerHighestLight = Color(0xFFDEDED9)
 
 // Neutrals - dark
-val PageDark = Color(0xFF0B0F1A)
-val SurfaceDark = Color(0xFF141924)
-val SurfaceDarkRaised = Color(0xFF1C2230)
-val OnDark = Color(0xFFF1F3F7)
-val OnDarkMuted = Color(0xFF9AA3B8)
-val OutlineDark = Color(0xFF262D3D)
+val PageDark = Color(0xFF0B0B0B)
+val SurfaceDark = Color(0xFF161616)
+val SurfaceDarkRaised = Color(0xFF202020)
+val OnDark = Color(0xFFF5F5F2)
+val OnDarkMuted = Color(0xFFA6A8AF)
+val OutlineDark = Color(0xFF333333)
 
-// Elevated-surface tones - dark, same reasoning as the light set above.
-val SurfaceContainerLowestDark = Color(0xFF060910)
-val SurfaceContainerLowDark = Color(0xFF10141F)
-val SurfaceContainerDark = Color(0xFF1C2230)
-val SurfaceContainerHighDark = Color(0xFF222A3D)
-val SurfaceContainerHighestDark = Color(0xFF29334A)
-
-// Brand - a restrained teal rather than the obvious "money green"
-val Teal = Color(0xFF0E7C66)
-val TealSoft = Color(0xFF4FB69E)
-val Slate = Color(0xFF5B6478)
-val Amber = Color(0xFFE8A33D)
+// Elevated-surface tones - dark
+val SurfaceContainerLowestDark = Color(0xFF050505)
+val SurfaceContainerLowDark = Color(0xFF121212)
+val SurfaceContainerDark = Color(0xFF1B1B1B)
+val SurfaceContainerHighDark = Color(0xFF252525)
+val SurfaceContainerHighestDark = Color(0xFF2E2E2E)
 
 // Semantic
-val Success = Color(0xFF1F9D66)
-val Warning = Color(0xFFE8A33D)
-val ErrorRed = Color(0xFFE5484D)
-val IncomeGreen = Color(0xFF1F9D66)
-val ExpenseCoral = Color(0xFFE5484D)
+val Success = Color(0xFF1E8A4C)
+val Warning = Color(0xFFB87A00)
+val ErrorRed = Color(0xFFD7262E)
+val IncomeGreen = Color(0xFF1E8A4C)
+val ExpenseCoral = Color(0xFFD7262E)
 
-// Container tints used by the Material colour schemes
-val TealContainerLight = Color(0xFFDCF2EC)
-val TealOnContainerLight = Color(0xFF07473B)
-val TealContainerDark = Color(0xFF16362E)
-
-// secondaryContainer tints. Left unset, Material3's baseline scheme derives a
-// lilac tone here that has nothing to do with this palette - components like
-// SegmentedButton and the nav bar indicator pick it up by default, so it needs
-// an explicit, on-brand value the same as every other role.
-val SlateContainerLight = Color(0xFFE3E6ED)
-val SlateOnContainerLight = Color(0xFF2B3242)
-val SlateContainerDark = Color(0xFF313A4E)
-val SlateOnContainerDark = Color(0xFFDCE1EC)
+// Secondary container tones, kept neutral so only yellow reads as "active"
+val SlateContainerLight = Color(0xFFE3E3DF)
+val SlateOnContainerLight = Color(0xFF222222)
+val SlateContainerDark = Color(0xFF2C2C2C)
+val SlateOnContainerDark = Color(0xFFE6E6E2)
 
 // Category accent palette assigned to default categories, and offered when a
 // user creates their own. Kept distinct enough to scan at a glance in a list.
