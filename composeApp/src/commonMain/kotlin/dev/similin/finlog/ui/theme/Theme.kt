@@ -7,17 +7,19 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import dev.similin.finlog.data.local.preference.AppPreference
 
+// Signal yellow carries the things that matter right now: primary actions,
+// the active tab, and the summary band. Neutrals do everything else.
 private val LightColors = lightColorScheme(
-    primary = Teal,
-    onPrimary = SurfaceLight,
-    primaryContainer = TealContainerLight,
-    onPrimaryContainer = TealOnContainerLight,
-    secondary = Slate,
+    primary = SignYellow,
+    onPrimary = Ink,
+    primaryContainer = SignYellow,
+    onPrimaryContainer = Ink,
+    secondary = InkMuted,
     onSecondary = SurfaceLight,
-    secondaryContainer = SlateContainerLight,
-    onSecondaryContainer = SlateOnContainerLight,
-    tertiary = Amber,
-    onTertiary = Ink,
+    secondaryContainer = SignYellow,
+    onSecondaryContainer = Ink,
+    tertiary = Warning,
+    onTertiary = SurfaceLight,
     background = PageLight,
     onBackground = Ink,
     surface = SurfaceLight,
@@ -36,15 +38,15 @@ private val LightColors = lightColorScheme(
 )
 
 private val DarkColors = darkColorScheme(
-    primary = TealSoft,
-    onPrimary = PageDark,
-    primaryContainer = TealContainerDark,
-    onPrimaryContainer = OnDark,
-    secondary = Slate,
+    primary = SignYellow,
+    onPrimary = SignBlack,
+    primaryContainer = SignYellow,
+    onPrimaryContainer = SignBlack,
+    secondary = OnDarkMuted,
     onSecondary = PageDark,
-    secondaryContainer = SlateContainerDark,
-    onSecondaryContainer = SlateOnContainerDark,
-    tertiary = Amber,
+    secondaryContainer = SignYellow,
+    onSecondaryContainer = SignBlack,
+    tertiary = Warning,
     onTertiary = PageDark,
     background = PageDark,
     onBackground = OnDark,

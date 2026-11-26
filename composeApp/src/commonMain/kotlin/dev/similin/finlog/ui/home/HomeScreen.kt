@@ -68,7 +68,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(Spacing.lg)
     ) {
         item {
-            Text(text = "Finlog", style = MaterialTheme.typography.headlineSmall)
+            Text(text = "FinLog", style = MaterialTheme.typography.headlineMedium)
         }
 
         item {
